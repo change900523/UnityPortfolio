@@ -20,15 +20,6 @@ public abstract class AttackManager
             }
         }
     }
-
-    public void ResetCoolTime()
-    {
-        for (int idx = 0; idx < attackInfos.Length; ++idx)
-        {
-            attackInfos[idx].ElapsedTime = 0;
-            attackInfos[idx].IsActive = true;
-        }
-    }
 }
 
 

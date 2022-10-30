@@ -22,11 +22,6 @@ public class HitTest : BattleObject
         }
     }
 
-    //public override void TakeDamage(float damage)
-    //{
-
-        //}
-
     protected override void Die()
     {
         capsuleColor.material.color = Color.clear;

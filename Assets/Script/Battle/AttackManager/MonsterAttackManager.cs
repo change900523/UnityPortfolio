@@ -63,22 +63,8 @@ public class MonsterAttackManager : AttackManager
     {
         AttackInfo result = null;
 
-        AttackInfo[] actives = Array.FindAll(attackInfos, inner => inner.IsActive);
-
-        if (actives.Length > 0)
-        {
-            if (actives.Length > 1)
-            {
-                Array.Sort(actives, SortAttack);
-            }
-
-            result = actives[0];
-        }
-        else
-        {
-            Array.Sort(attackInfos, SortAttack);
-            result = attackInfos[0];
-        }
+        Array.Sort(attackInfos, SortAttack);
+        result = attackInfos[0];
 
         return result;
     }
