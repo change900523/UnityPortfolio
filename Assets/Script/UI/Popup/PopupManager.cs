@@ -1,17 +1,16 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PopupManager : Singleton<PopupManager>
+public class PopupManager : MonoSingleton<PopupManager>
 {
+    [SerializeField]
     private Canvas uiRoot  = null;
     private int order = Defines.DEFAULT_UI_ORDER;
     private List<PopupBase> popupList = new List<PopupBase>();
 
-    public void Initialize(Canvas canvas)
+    private void Start()
     {
-        uiRoot = canvas;
         order = Defines.DEFAULT_UI_ORDER;
-        popupList.Clear();
     }
 
     public PopupBase CreatePopupUI(EPopupType popupType)
@@ -19,7 +18,7 @@ public class PopupManager : Singleton<PopupManager>
         string popupName = popupType.ToString();
         string popupPath = "Popup/" + popupName;
 
-        PopupBase popup = Object.Instantiate(Resources.Load(popupPath, typeof(PopupBase))) as PopupBase;
+        PopupBase popup = Instantiate(Resources.Load(popupPath, typeof(PopupBase))) as PopupBase;
         popup.name = popupName;
         popup.transform.SetParent(uiRoot.transform);
         order++;

@@ -105,6 +105,9 @@ public class Player : BattleObject
     {
         base.TakeDamage(damage);
         hpBar.SetHP(hp);
+
+        DamageFont damageFont = DamageFontPool.Instance.GetDamageFont();
+        damageFont.ShowDamage(damage, this.transform);
     }
 
 
