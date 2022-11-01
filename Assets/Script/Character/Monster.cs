@@ -87,7 +87,7 @@ public class Monster : BattleObject
         hpBar.SetHP(hp);
 
         DamageFont damageFont = DamageFontPool.Instance.GetDamageFont();
-        damageFont.ShowDamage(damage, this.transform);
+        damageFont.ShowDamage(damage, transform.position);
     }
 
     protected override void Die()

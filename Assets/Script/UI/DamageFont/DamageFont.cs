@@ -11,7 +11,6 @@ public class DamageFont : MonoBehaviour
     public bool IsActive { get; private set; }
 
     private Transform pool = null;
-    private Transform owner = null;
     private float deltaTime = 0f;
 
     private void Update()
@@ -21,11 +20,11 @@ public class DamageFont : MonoBehaviour
         {
             IsActive = false;
             gameObject.SetActive(false);
-            transform.parent = pool;
+            transform.SetParent(pool);
         }
         else
         {
-            damageText.transform.Translate(new Vector3(0f, 5f, 0f) * Time.deltaTime);
+            damageText.transform.Translate(new Vector3(0f, 100f, 0f) * Time.deltaTime);
         }
     }
 
@@ -34,15 +33,19 @@ public class DamageFont : MonoBehaviour
         pool = inOwner;
     }
 
-    public void ShowDamage(float inDamage, Transform inTarget)
+    public void ShowDamage(float inDamage, Vector3 targetPosition)
     {
-        owner = inTarget;
-        transform.parent = null;
+        transform.SetParent(null);
         int damage = Mathf.FloorToInt(inDamage);
         damageText.text = damage.ToString();
         deltaTime = 0f;
         IsActive = true;
-        damageText.transform.position = Camera.main.WorldToScreenPoint(owner.position);
+
+        float randomX = Random.Range(-0.5f, 0.5f);
+        float randomY = Random.Range(-0.5f, 0.5f);
+        targetPosition = new Vector3(targetPosition.x + randomX, targetPosition.y + randomY, targetPosition.z);
+
+        damageText.transform.position = Camera.main.WorldToScreenPoint(targetPosition);
         gameObject.SetActive(true);
     }
 }
