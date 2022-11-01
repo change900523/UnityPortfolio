@@ -23,6 +23,7 @@ public class PlayerAttackChaseLogic : MoveLogic
     protected override void Cancel()
     {
         EventManager<int>.Instance.TriggerEvent(EventEnum.CancelAttack, treeData.ReserveAttackInfo.Index);
+        treeData.ReserveAttackInfo = null;
     }
 
     protected override void End()
