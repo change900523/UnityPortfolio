@@ -20,8 +20,6 @@ public abstract class GameLogic : MonoBehaviour
 
     private void Awake()
     {
-        PopupManager.Instance.Initialize(canvas);
-
         InitUI();
         InitPlayer();
         InitEnemy();
