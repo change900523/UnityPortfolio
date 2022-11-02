@@ -53,6 +53,7 @@ public class AttackAnimationLogic : BehaviorTreeDeltaTimeLogic
         if (treeData.CancelAttackAnimation())
         {
             animator.SetInteger(hashAttackIndex, Defines.DEFAULT_ATTACK_INDEX);
+            treeData.ReserveAttackInfo = null;
             result = TaskStatus.Success;
         }
         else

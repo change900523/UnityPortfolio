@@ -1,8 +1,9 @@
 using UnityEngine;
+using UnityEngine.AI;
 
 public class PlayerAttackChaseLogic : MoveLogic
 {
-    public PlayerAttackChaseLogic(PlayerBehaviorTreeData data, Animator inAnimator) : base(data, inAnimator)
+    public PlayerAttackChaseLogic(PlayerBehaviorTreeData data, Animator inAnimator, NavMeshAgent agent) : base(data, inAnimator, agent)
     {
         treeData = data;
     }
@@ -23,6 +24,7 @@ public class PlayerAttackChaseLogic : MoveLogic
     protected override void Cancel()
     {
         EventManager<int>.Instance.TriggerEvent(EventEnum.CancelAttack, treeData.ReserveAttackInfo.Index);
+        treeData.ReserveAttackInfo = null;
     }
 
     protected override void End()

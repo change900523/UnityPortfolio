@@ -74,8 +74,6 @@ public class JoystickController : MonoBehaviour, IDragHandler, IPointerUpHandler
                     Vector2 joystickDirection = new Vector2(direction.x, direction.z);
 
                     EventManager<Vector2>.Instance.TriggerEvent(EventEnum.JoystickControl, joystickDirection);
-
-                    //gameLogicBase.SetJoystickDirection(joystickDirection.x, joystickDirection.y);
                     break;
                 }
             }

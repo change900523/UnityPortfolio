@@ -1,8 +1,9 @@
 using UnityEngine;
+using UnityEngine.AI;
 
 public class MonsterComeBackLogic : MoveLogic
 {
-    public MonsterComeBackLogic(MonsterBehaviorTreeData data, Animator inAnimator, Vector3 inBasePosition) : base(data, inAnimator)
+    public MonsterComeBackLogic(MonsterBehaviorTreeData data, Animator inAnimator, Vector3 inBasePosition, NavMeshAgent agent) : base(data, inAnimator, agent)
     {
         treeData = data;
         basePosition = inBasePosition;
@@ -24,12 +25,12 @@ public class MonsterComeBackLogic : MoveLogic
 
     protected override void Cancel()
     {
-        treeData.ChaseData = MoveData.Default;
+        treeData.ComeBackData = MoveData.Default;
     }
 
     protected override void End()
     {
-        treeData.ChaseData = MoveData.Default;
+        treeData.ComeBackData = MoveData.Default;
     }
 
     protected override bool IsCancel()

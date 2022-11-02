@@ -1,19 +1,22 @@
 using System;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class PlayerControlMoveLogic : BehaviorTreeDeltaTimeLogic
 {
-    public PlayerControlMoveLogic(PlayerBehaviorTreeData data,  Animator inAnimator, Func<BattleObject> inAutoTargetfunc)
+    public PlayerControlMoveLogic(PlayerBehaviorTreeData data,  Animator inAnimator, Func<BattleObject> inAutoTargetfunc, NavMeshAgent agent)
     {
         treeData = data;
         animator = inAnimator;
         autoTargetFunc = inAutoTargetfunc;
+        navMeshAgent = agent;
     }
 
     private readonly int hashRun = Animator.StringToHash("Run");
     private readonly PlayerBehaviorTreeData treeData = null;
     private readonly Animator animator = null;
     private readonly Func<BattleObject> autoTargetFunc = null;
+    private readonly NavMeshAgent navMeshAgent = null;
 
     public override void StartLogic()
     {
@@ -32,14 +35,24 @@ public class PlayerControlMoveLogic : BehaviorTreeDeltaTimeLogic
         }
         else
         {
-            Vector3 targetPosition = new Vector3(treeData.JoystickDirection.x, 0f, treeData.JoystickDirection.y);
-
             Transform transform = treeData.transform;
 
-            transform.position = Vector3.MoveTowards(transform.position, transform.position + targetPosition , deltaTime * Defines.PLAYER_MOVE_SPEED);
-            Quaternion lookRotation = Quaternion.LookRotation(targetPosition);
-            Quaternion quaternion = Quaternion.Lerp(transform.rotation, lookRotation, deltaTime * Defines.ROTATE_SPEED);
-            transform.rotation = quaternion;
+            Vector3 joystickDirection = new Vector3(treeData.JoystickDirection.x, 0f, treeData.JoystickDirection.y);
+            if (joystickDirection != Vector3.zero && joystickDirection.magnitude > Mathf.Epsilon)
+            {
+                Quaternion lookRotation = Quaternion.LookRotation(joystickDirection);
+                Quaternion quaternion = Quaternion.Lerp(transform.rotation, lookRotation, deltaTime * Defines.ROTATE_SPEED);
+                transform.rotation = quaternion;
+            }
+
+            Vector3 targetPosition = Vector3.MoveTowards(transform.position, transform.position + joystickDirection, deltaTime * Defines.PLAYER_MOVE_SPEED);
+            
+            NavMeshHit navMeshHit = new NavMeshHit();
+            if (navMeshAgent.Raycast(targetPosition, out navMeshHit) == false)
+            {
+                transform.position = targetPosition;
+                navMeshAgent.nextPosition = transform.position;
+            }
 
             treeData.Target = autoTargetFunc.Invoke();
         }

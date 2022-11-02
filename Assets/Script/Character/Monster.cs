@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class Monster : BattleObject
 {
@@ -13,6 +14,10 @@ public class Monster : BattleObject
     private MonsterData monsterData = null;
     [SerializeField]
     private HPBar hpBar = null;
+    [SerializeField]
+    private Transform fontPosition = null;
+    [SerializeField]
+    private NavMeshAgent navMeshAgent = null;
 
 
     private MonsterBehaviorTree behaviorTree = null;
@@ -33,6 +38,8 @@ public class Monster : BattleObject
         attack = monsterData.Attack;
         hp = monsterData.HP;
         hpBar.Initialize(hp);
+        navMeshAgent.updatePosition = false;
+        navMeshAgent.updateRotation = false;
     }
 
     private void Update()
@@ -54,9 +61,9 @@ public class Monster : BattleObject
     private void SetTree(Vector3 basePosition)
     {
         dieLogic = new MonsterDieLogic(animator);
-        chaseLogic = new MonsterChaseLogic(treeData, animator);
+        chaseLogic = new MonsterChaseLogic(treeData, animator, navMeshAgent);
         attackAnimationLogic = new AttackAnimationLogic(treeData, animator, attackManager, Attack);
-        comeBackLogic = new MonsterComeBackLogic(treeData, animator, basePosition);
+        comeBackLogic = new MonsterComeBackLogic(treeData, animator, basePosition, navMeshAgent);
         idleLogic = new MonsterIdleLogic(treeData, attackManager, basePosition, monsterData.ComeBackDistance);
 
         behaviorTree = new MonsterBehaviorTree(treeData,
@@ -74,21 +81,23 @@ public class Monster : BattleObject
 
     public void SetTarget(bool value)
     {
-        if (IsDie() == false)
-        {
-            IsTarget = value;
-            targetRim.SetActive(value);
-        }
+        IsTarget = value;
+        targetRim.SetActive(value);
     }
 
     public override void TakeDamage(float damage)
     {
         base.TakeDamage(damage);
         hpBar.SetHP(hp);
+
+        DamageFont damageFont = DamageFontPool.Instance.GetDamageFont();
+        damageFont.ShowDamage(damage, fontPosition.position, EFontType.Monster);
     }
 
     protected override void Die()
     {
         treeData.IsDie = true;
+        navMeshAgent.enabled = false;
+        SetTarget(false);
     }
 }

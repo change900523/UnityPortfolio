@@ -1,8 +1,9 @@
 using UnityEngine;
+using UnityEngine.AI;
 
 public class MonsterChaseLogic : MoveLogic
 {
-    public MonsterChaseLogic(MonsterBehaviorTreeData data, Animator inAnimator) : base(data, inAnimator) 
+    public MonsterChaseLogic(MonsterBehaviorTreeData data, Animator inAnimator, NavMeshAgent agent) : base(data, inAnimator, agent) 
     {
         treeData = data;
     }

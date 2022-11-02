@@ -29,7 +29,7 @@ public abstract class BattleObject : MonoBehaviour
 
     protected abstract void Die();
 
-    protected void Attack(AttackInfo attackInfo, BattleObject target)
+    protected virtual void Attack(AttackInfo attackInfo, BattleObject target)
     {
         float damage = attack + attackInfo.AttackDamage;
         attackAction.Invoke(attackInfo, Tribe, this, target, damage);

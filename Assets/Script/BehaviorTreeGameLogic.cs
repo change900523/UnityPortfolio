@@ -12,14 +12,16 @@ public class BehaviorTreeGameLogic : GameLogic
 
     protected override void InitEnemy()
     {
-        foreach (Vector3 postion in monsterSpawnPosition)
+        for(int i = 0; i< monsterSpawnPosition.Count; i++)
         {
-            GameObject gameObject = Instantiate(monsterObj, postion, Quaternion.Euler(Vector3.zero));
+            GameObject gameObject = Instantiate(monsterObj, monsterSpawnPosition[i], Quaternion.Euler(Vector3.zero));
+            gameObject.name = i.ToString();
             Monster monster = gameObject.GetComponent<Monster>();
-            monster.Initialize(player, postion, Attack);
+            monster.Initialize(player, monsterSpawnPosition[i], Attack);
             battleObjects.Add(monster);
             monsters.Add(monster);
         }
+        
     }
 
     protected override BattleObject AutoTargetAmongEnemy(float autoTargetDistance)
