@@ -22,7 +22,7 @@ public abstract class MoveLogic : BehaviorTreeDeltaTimeLogic
     {
         animator.SetBool(hashRun, true);
         transform = treeData.transform;
-        stopDistance = inStopDistance;
+        stopDistance = inStopDistance * inStopDistance;
         speed = inSpeed;
     }
 
