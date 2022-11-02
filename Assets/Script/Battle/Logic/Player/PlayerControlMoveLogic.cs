@@ -46,9 +46,8 @@ public class PlayerControlMoveLogic : BehaviorTreeDeltaTimeLogic
             }
 
             Vector3 targetPosition = Vector3.MoveTowards(transform.position, transform.position + joystickDirection, deltaTime * Defines.PLAYER_MOVE_SPEED);
-            
-            NavMeshHit navMeshHit = new NavMeshHit();
-            if (navMeshAgent.Raycast(targetPosition, out navMeshHit) == false)
+
+            if (navMeshAgent.Raycast(targetPosition, out NavMeshHit navMeshHit) == false)
             {
                 transform.position = targetPosition;
                 navMeshAgent.nextPosition = transform.position;
