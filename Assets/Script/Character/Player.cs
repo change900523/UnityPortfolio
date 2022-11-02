@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class Player : BattleObject
 {
@@ -11,6 +12,10 @@ public class Player : BattleObject
     private PlayerData playerData = null;
     [SerializeField]
     private HPBar hpBar = null;
+    [SerializeField]
+    private Transform fontPosition = null;
+    [SerializeField]
+    private NavMeshAgent agent = null;
 
 
     private PlayerBehaviorTree behaviorTree = null;
@@ -30,6 +35,9 @@ public class Player : BattleObject
         attack = playerData.Attack;
         hp = playerData.HP;
         hpBar.Initialize(hp);
+     
+        agent.updatePosition = false;
+        agent.updateRotation = false;
     }
 
     private void Update()
@@ -68,8 +76,8 @@ public class Player : BattleObject
     private void SetTree()
     {
         dieLogic = new PlayerDieLogic(animator);
-        controlMoveLogic = new PlayerControlMoveLogic(treeData, animator, AutoTarget);
-        attackChaseLogic = new PlayerAttackChaseLogic(treeData, animator);
+        controlMoveLogic = new PlayerControlMoveLogic(treeData, animator, AutoTarget, agent);
+        attackChaseLogic = new PlayerAttackChaseLogic(treeData, animator, agent);
         attackAnimationLogic = new AttackAnimationLogic(treeData, animator, attackManager, Attack);
         idleLogic = new PlayerIdleLogic(treeData, AutoTarget);
 
@@ -107,9 +115,14 @@ public class Player : BattleObject
         hpBar.SetHP(hp);
 
         DamageFont damageFont = DamageFontPool.Instance.GetDamageFont();
-        damageFont.ShowDamage(damage, transform.position);
+        damageFont.ShowDamage(damage, fontPosition.position, EFontType.Player);
     }
 
+    protected override void Attack(AttackInfo attackInfo, BattleObject target)
+    {
+        EventManager<float, float>.Instance.TriggerEvent(EventEnum.ShakeCamera, 5f, 0.1f);
+        base.Attack(attackInfo, target);
+    }
 
     protected override void Die()
     {

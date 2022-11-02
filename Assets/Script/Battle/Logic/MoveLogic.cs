@@ -1,16 +1,19 @@
 using UnityEngine;
+using UnityEngine.AI;
 
 public abstract class MoveLogic : BehaviorTreeDeltaTimeLogic
 {
-    public MoveLogic(BehaviorTreeData data, Animator inAnimator)
+    public MoveLogic(BehaviorTreeData data, Animator inAnimator, NavMeshAgent agent)
     {
         treeData = data;
         animator = inAnimator;
+        navMeshAgent = agent;
     }
 
     private readonly BehaviorTreeData treeData = null;
     private readonly int hashRun = Animator.StringToHash("Run");
     private readonly Animator animator = null;
+    private readonly NavMeshAgent navMeshAgent = null;
     private float stopDistance = float.MaxValue;
     private Transform transform = null;
     private float speed = 0f;
@@ -27,6 +30,8 @@ public abstract class MoveLogic : BehaviorTreeDeltaTimeLogic
     {
         TaskStatus result = TaskStatus.Continue;
         float targetDistance = (transform.position - targetPosition).sqrMagnitude;
+        NavMeshPath navMeshPath = new NavMeshPath();
+        navMeshAgent.CalculatePath(targetPosition, navMeshPath);
 
         if (IsCancel() == true)
         {
@@ -34,11 +39,23 @@ public abstract class MoveLogic : BehaviorTreeDeltaTimeLogic
             animator.SetBool(hashRun, false);
             result = TaskStatus.Success;
         }
-        else if (targetDistance > stopDistance)
+        else if (navMeshPath.status == NavMeshPathStatus.PathComplete && targetDistance > stopDistance)
         {
-            transform.position = Vector3.MoveTowards(transform.position, targetPosition, deltaTime * speed);
+            Vector3 destination = Vector3.zero;
 
-            Vector3 targetVector = targetPosition - transform.position;
+            for (int i = 0; i < navMeshPath.corners.Length; i++)
+            {
+                if (navMeshPath.corners[i].x != transform.position.x && navMeshPath.corners[i].z != transform.position.z)
+                {
+                    destination = new Vector3(navMeshPath.corners[i].x, 0f, navMeshPath.corners[i].z);
+                    break;
+                }
+            }
+
+            transform.position = Vector3.MoveTowards(transform.position, destination, deltaTime * speed);
+            navMeshAgent.nextPosition = transform.position;
+
+            Vector3 targetVector = destination - transform.position;
             targetVector = new Vector3(targetVector.x, 0f, targetVector.z);
 
             if (targetVector != Vector3.zero && targetVector.magnitude > Mathf.Epsilon)

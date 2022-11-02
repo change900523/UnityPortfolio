@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using Cinemachine;
 
 public abstract class GameLogic : MonoBehaviour
 {
@@ -11,8 +12,8 @@ public abstract class GameLogic : MonoBehaviour
     private GameObject battleUI = null;
     [SerializeField]
     private Canvas canvas = null;
-    [SerializeField]
-    private PlayerCamera playerCamera = null;
+   [SerializeField]
+    private CinemachineVirtualCamera playerCamera = null;
 
     protected Player player = null;
     protected List<BattleObject> battleObjects = new List<BattleObject>();
@@ -41,7 +42,8 @@ public abstract class GameLogic : MonoBehaviour
         player.Initialize(AutoTargetAmongEnemy, Attack);
         battleObjects.Add(player);
 
-        playerCamera.Initialize(gameObject.transform);
+        playerCamera.Follow = gameObject.transform;
+        playerCamera.LookAt = gameObject.transform;
     }
 
     protected virtual void Attack(AttackInfo attackInfo, uint attackerTribe, BattleObject attacker, BattleObject target, float damage)

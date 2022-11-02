@@ -6,5 +6,6 @@ public enum EventEnum
     CancelAttack,
     ExecuteAttack,
     UpdateAttackCoolTime,
-    SetAttackButton
+    SetAttackButton,
+    ShakeCamera
 }

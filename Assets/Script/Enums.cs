@@ -11,3 +11,9 @@ public enum EPopupType
 {
     PopupEnd,
 }
+
+public enum EFontType
+{
+    Player,
+    Monster,
+}
