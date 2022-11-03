@@ -14,14 +14,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   index: 1
   skillName: aa
-  damRangeValue1: 0
-  damRangeValue2: 0
+  damRangeValue1: 4
+  damRangeValue2: 2
   maxRange: 1
-  hitType: 0
+  hitType: 3
   coolTime: 1
   rangeTime: 0
   attackTime: 1
   hitTimes:
   - 0.5
   animationIndex: 1
-  attackDamage: 1
+  attackDamage: 20
