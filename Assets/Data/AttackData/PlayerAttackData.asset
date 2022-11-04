@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: PlayerAttackData
   m_EditorClassIdentifier: 
   index: 1
-  skillName: aa
-  damRangeValue1: 4
+  skillName: A
+  damRangeValue1: 2
   damRangeValue2: 2
   maxRange: 1
   hitType: 3
