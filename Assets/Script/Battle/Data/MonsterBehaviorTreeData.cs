@@ -20,7 +20,7 @@ public class MonsterBehaviorTreeData : BehaviorTreeData
     {
         bool result = false;
 
-        if (TargetDistance() > Mathf.Pow(AggroDistance, 2))
+        if (IsDie == true || TargetDistance() > Mathf.Pow(AggroDistance, 2))
         {
             result = true;
         }
@@ -35,7 +35,7 @@ public class MonsterBehaviorTreeData : BehaviorTreeData
 
     public override bool CancelAttackAnimation()
     {
-        return false;
+        return IsDie == true;
     }
 
     public bool IsComeBack()
@@ -45,7 +45,7 @@ public class MonsterBehaviorTreeData : BehaviorTreeData
 
     public bool CancelComeBack()
     {
-        return false;
+        return IsDie == true;
     }
 
     public bool IsIdle()

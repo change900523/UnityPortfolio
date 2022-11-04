@@ -4,6 +4,7 @@
     Guided,
     Circle,
     CircularSector,
+    Box,
     Max
 }
 
