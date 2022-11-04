@@ -41,12 +41,18 @@ public class ChangeAttackInfo : MonoBehaviour
 
     public void EndValue1InputField(InputField value)
     {
-        value1 = float.Parse(value.text);
+        if (string.IsNullOrEmpty(value.text) == false)
+        {
+            value1 = float.Parse(value.text);
+        }
     }
 
     public void EndValue2InputField(InputField value)
     {
-        value2 = float.Parse(value.text);
+        if (string.IsNullOrEmpty(value.text) == false)
+        {
+            value2 = float.Parse(value.text);
+        }
     }
 
     public (EHitType hitTpye, float value1, float value2) GetAttackInfo() => (hitType, value1, value2);
