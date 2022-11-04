@@ -29,9 +29,6 @@ public abstract class MoveLogic : BehaviorTreeDeltaTimeLogic
     protected TaskStatus Move(float deltaTime, Vector3 targetPosition)
     {
         TaskStatus result = TaskStatus.Continue;
-        float targetDistance = (transform.position - targetPosition).sqrMagnitude;
-        NavMeshPath navMeshPath = new NavMeshPath();
-        navMeshAgent.CalculatePath(targetPosition, navMeshPath);
 
         if (IsCancel() == true)
         {
@@ -39,37 +36,44 @@ public abstract class MoveLogic : BehaviorTreeDeltaTimeLogic
             animator.SetBool(hashRun, false);
             result = TaskStatus.Success;
         }
-        else if (navMeshPath.status == NavMeshPathStatus.PathComplete && targetDistance > stopDistance)
-        {
-            Vector3 destination = Vector3.zero;
-
-            for (int i = 0; i < navMeshPath.corners.Length; i++)
-            {
-                if (navMeshPath.corners[i].x != transform.position.x && navMeshPath.corners[i].z != transform.position.z)
-                {
-                    destination = new Vector3(navMeshPath.corners[i].x, 0f, navMeshPath.corners[i].z);
-                    break;
-                }
-            }
-
-            transform.position = Vector3.MoveTowards(transform.position, destination, deltaTime * speed);
-            navMeshAgent.nextPosition = transform.position;
-
-            Vector3 targetVector = destination - transform.position;
-            targetVector = new Vector3(targetVector.x, 0f, targetVector.z);
-
-            if (targetVector != Vector3.zero && targetVector.magnitude > Mathf.Epsilon)
-            {
-                Quaternion lookRotation = Quaternion.LookRotation(targetVector);
-                Quaternion quaternion = Quaternion.Lerp(transform.rotation, lookRotation, deltaTime * Defines.ROTATE_SPEED);
-                transform.rotation = quaternion;
-            }
-        }
         else
         {
-            End();
-            animator.SetBool(hashRun, false);
-            result = TaskStatus.Success;
+            float targetDistance = (transform.position - targetPosition).sqrMagnitude;
+            NavMeshPath navMeshPath = new NavMeshPath();
+            navMeshAgent.CalculatePath(targetPosition, navMeshPath);
+
+            if (navMeshPath.status == NavMeshPathStatus.PathComplete && targetDistance > stopDistance)
+            {
+                Vector3 destination = Vector3.zero;
+
+                for (int i = 0; i < navMeshPath.corners.Length; i++)
+                {
+                    if (navMeshPath.corners[i].x != transform.position.x && navMeshPath.corners[i].z != transform.position.z)
+                    {
+                        destination = new Vector3(navMeshPath.corners[i].x, 0f, navMeshPath.corners[i].z);
+                        break;
+                    }
+                }
+
+                transform.position = Vector3.MoveTowards(transform.position, destination, deltaTime * speed);
+                navMeshAgent.nextPosition = transform.position;
+
+                Vector3 targetVector = destination - transform.position;
+                targetVector = new Vector3(targetVector.x, 0f, targetVector.z);
+
+                if (targetVector != Vector3.zero && targetVector.magnitude > Mathf.Epsilon)
+                {
+                    Quaternion lookRotation = Quaternion.LookRotation(targetVector);
+                    Quaternion quaternion = Quaternion.Lerp(transform.rotation, lookRotation, deltaTime * Defines.ROTATE_SPEED);
+                    transform.rotation = quaternion;
+                }
+            }
+            else
+            {
+                End();
+                animator.SetBool(hashRun, false);
+                result = TaskStatus.Success;
+            }
         }
 
         return result;

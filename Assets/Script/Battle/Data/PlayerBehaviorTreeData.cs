@@ -15,7 +15,7 @@ public class PlayerBehaviorTreeData : BehaviorTreeData
 
     public bool CancelControlMove()
     {
-        bool result = JoystickDirection == Vector2.zero || ReserveAttackInfo != null;
+        bool result = IsDie || JoystickDirection == Vector2.zero || ReserveAttackInfo != null;
 
         if (result == true)
         {
@@ -38,12 +38,12 @@ public class PlayerBehaviorTreeData : BehaviorTreeData
 
     public bool CancelAttackChase()
     {
-        return IsControlling();
+        return IsDie || IsControlling();
     }
 
     public override bool CancelAttackAnimation()
     {
-        bool result = IsControlling();
+        bool result = IsDie || IsControlling();
 
         if (result == true)
         {
