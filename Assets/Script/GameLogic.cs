@@ -65,7 +65,7 @@ public abstract class GameLogic : MonoBehaviour
                 CircleCast(attackerTribe, targetPosition, attackInfo.DamRangeValue1, damage);
                 break;
             case EHitType.CircularSector:
-                SectorFormCast(attackerTribe, targetPosition, attackInfo.DamRangeValue1, direction, attackInfo.DamRangeValue2, damage);
+                SectorFormCast(attackerTribe, targetPosition, direction, attackInfo.DamRangeValue1, attackInfo.DamRangeValue2, damage);
                 break;
             case EHitType.Box:
                 BoxCast(attackerTribe, attackPosition, new Vector2(attackInfo.DamRangeValue1 * 0.5f, attackInfo.DamRangeValue2 * 0.5f), direction, damage);
@@ -77,111 +77,120 @@ public abstract class GameLogic : MonoBehaviour
 
     private void CircleCast(uint attackerTribe, Vector2 center, float radius, float damage)
     {
-        for (int i = 0; i < battleObjects.Count; i++)
+        if (radius != 0)
         {
-            if (battleObjects[i].Tribe != attackerTribe && IsObjectBattle(battleObjects[i]))
+            for (int i = 0; i < battleObjects.Count; i++)
             {
-                float objectRadius = battleObjects[i].ColliderRadius;
-
-                float deltaX = battleObjects[i].transform.position.x - center.x;
-                float deltaZ = battleObjects[i].transform.position.z - center.y;
-
-                //UnityEngine.Debug.Log("index = " + data.index + ", 중심점 x = " + center.x + ", 중심점 x = " + center.y + ", 거리 = " + (deltaX * deltaX + deltaY * deltaY) + ", 반지름 = " + Math.Pow(radius + objectRadius, 2f));
-
-                if ((deltaX * deltaX + deltaZ * deltaZ) < Mathf.Pow(radius + objectRadius, 2f))
+                if (battleObjects[i].Tribe != attackerTribe && IsObjectBattle(battleObjects[i]))
                 {
-                    battleObjects[i].TakeDamage(damage);
+                    float objectRadius = battleObjects[i].ColliderRadius;
+
+                    float deltaX = battleObjects[i].transform.position.x - center.x;
+                    float deltaZ = battleObjects[i].transform.position.z - center.y;
+
+                    //UnityEngine.Debug.Log("index = " + data.index + ", 중심점 x = " + center.x + ", 중심점 x = " + center.y + ", 거리 = " + (deltaX * deltaX + deltaY * deltaY) + ", 반지름 = " + Math.Pow(radius + objectRadius, 2f));
+
+                    if ((deltaX * deltaX + deltaZ * deltaZ) < Mathf.Pow(radius + objectRadius, 2f))
+                    {
+                        battleObjects[i].TakeDamage(damage);
+                    }
                 }
             }
         }
     }
 
-    private void SectorFormCast(uint attackerTribe, Vector2 center, float radius, Vector2 direction, float standardDegree, float damage)
+    private void SectorFormCast(uint attackerTribe, Vector2 center, Vector2 direction, float radius, float standardDegree, float damage)
     {
-        for (int i = 0; i < battleObjects.Count; i++)
+        if (radius != 0 && standardDegree != 0)
         {
-            if (battleObjects[i].Tribe != attackerTribe && IsObjectBattle(battleObjects[i]))
+            for (int i = 0; i < battleObjects.Count; i++)
             {
-                float objectRadius = battleObjects[i].ColliderRadius;
-
-                Vector2 delta = new Vector2(battleObjects[i].transform.position.x, battleObjects[i].transform.position.z) - center;
-                float sqr = delta.sqrMagnitude;
-
-                if (sqr <= Mathf.Pow(radius + objectRadius, 2f))
+                if (battleObjects[i].Tribe != attackerTribe && IsObjectBattle(battleObjects[i]))
                 {
-                    direction = direction.normalized;
-                    delta = delta.normalized;
-                    float degree;
-                    if (delta == direction || delta == Vector2.zero)
-                    {
-                        degree = 0f;
-                    }
-                    else
-                    {
-                        float dotValue = Vector2.Dot(direction, delta);
-                        degree = Mathf.Acos(dotValue) * Mathf.Rad2Deg;
-                    }
+                    float objectRadius = battleObjects[i].ColliderRadius;
 
-                    if (degree >= standardDegree * -0.5f && degree <= standardDegree * 0.5f)
+                    Vector2 delta = new Vector2(battleObjects[i].transform.position.x, battleObjects[i].transform.position.z) - center;
+                    float sqr = delta.sqrMagnitude;
+
+                    if (sqr <= Mathf.Pow(radius + objectRadius, 2f))
                     {
-                        battleObjects[i].TakeDamage(damage);
+                        direction = direction.normalized;
+                        delta = delta.normalized;
+                        float degree;
+                        if (delta == direction || delta == Vector2.zero)
+                        {
+                            degree = 0f;
+                        }
+                        else
+                        {
+                            float dotValue = Vector2.Dot(direction, delta);
+                            degree = Mathf.Acos(dotValue) * Mathf.Rad2Deg;
+                        }
+
+                        if (degree >= standardDegree * -0.5f && degree <= standardDegree * 0.5f)
+                        {
+                            battleObjects[i].TakeDamage(damage);
+                        }
+                        //else
+                        //{
+                        //    Debug.Log("name = " + battleObjects[i].name + ", degree = " + degree);
+                        //}
                     }
                     //else
                     //{
-                    //    Debug.Log("name = " + battleObjects[i].name + ", degree = " + degree);
+                    //    Debug.Log("name = " + battleObjects[i].name);
                     //}
                 }
-                //else
-                //{
-                //    Debug.Log("name = " + battleObjects[i].name);
-                //}
             }
         }
     }
 
     private void BoxCast(uint attackerTribe, Vector2 start, Vector2 boxSize, Vector2 direction, float damage)
     {
-        float left = -boxSize.x;
-        float right = boxSize.x;
-        float top = boxSize.y;
-        float bottom = -boxSize.y;
-        float cos = direction.x;
-        float sin = direction.y;
-
-        for (int i = 0; i < battleObjects.Count; i++)
+        if (boxSize != Vector2.zero)
         {
-            if (battleObjects[i].Tribe != attackerTribe && IsObjectBattle(battleObjects[i]))
+            float left = -boxSize.x;
+            float right = boxSize.x;
+            float top = boxSize.y;
+            float bottom = -boxSize.y;
+            float cos = direction.x;
+            float sin = direction.y;
+
+            for (int i = 0; i < battleObjects.Count; i++)
             {
-                Vector2 position = new Vector2(battleObjects[i].transform.position.x, battleObjects[i].transform.position.z);
-                float radius = battleObjects[i].ColliderRadius;
-
-                if (IsPointInBox(left - radius, right + radius, bottom, top, sin, cos, right, start, direction, position))
+                if (battleObjects[i].Tribe != attackerTribe && IsObjectBattle(battleObjects[i]))
                 {
-                    battleObjects[i].TakeDamage(damage);
-                }
-                else if (IsPointInBox(left, radius, bottom - radius, top + radius, sin, cos, right, start, direction, position))
-                {
-                    battleObjects[i].TakeDamage(damage);
-                }
-                else
-                {
-                    Vector2 vertex1 = new Vector2((left * cos) - (top * sin), (left * sin) + (top * cos));
-                    Vector2 vertex2 = new Vector2((right * cos) - (top * sin), (right * sin) + (top * cos));
-                    Vector2 vertex3 = new Vector2((right * cos) - (bottom * sin), (right * sin) + (bottom * cos));
-                    Vector2 vertex4 = new Vector2((left * cos) - (bottom * sin), (left * sin) + (bottom * cos));
+                    Vector2 position = new Vector2(battleObjects[i].transform.position.x, battleObjects[i].transform.position.z);
+                    float radius = battleObjects[i].ColliderRadius;
 
-                    Vector2 movePostion = start + direction * right;
-                    vertex1 += movePostion;
-                    vertex2 += movePostion;
-                    vertex3 += movePostion;
-                    vertex4 += movePostion;
-
-                    if (IsPointInCircle(vertex1, position, radius) ||
-                        IsPointInCircle(vertex2, position, radius) ||
-                        IsPointInCircle(vertex3, position, radius) ||
-                        IsPointInCircle(vertex4, position, radius)) //               
+                    if (IsPointInBox(left - radius, right + radius, bottom, top, sin, cos, right, start, direction, position))
                     {
                         battleObjects[i].TakeDamage(damage);
+                    }
+                    else if (IsPointInBox(left, radius, bottom - radius, top + radius, sin, cos, right, start, direction, position))
+                    {
+                        battleObjects[i].TakeDamage(damage);
+                    }
+                    else
+                    {
+                        Vector2 vertex1 = new Vector2((left * cos) - (top * sin), (left * sin) + (top * cos));
+                        Vector2 vertex2 = new Vector2((right * cos) - (top * sin), (right * sin) + (top * cos));
+                        Vector2 vertex3 = new Vector2((right * cos) - (bottom * sin), (right * sin) + (bottom * cos));
+                        Vector2 vertex4 = new Vector2((left * cos) - (bottom * sin), (left * sin) + (bottom * cos));
+
+                        Vector2 movePostion = start + direction * right;
+                        vertex1 += movePostion;
+                        vertex2 += movePostion;
+                        vertex3 += movePostion;
+                        vertex4 += movePostion;
+
+                        if (IsPointInCircle(vertex1, position, radius) ||
+                            IsPointInCircle(vertex2, position, radius) ||
+                            IsPointInCircle(vertex3, position, radius) ||
+                            IsPointInCircle(vertex4, position, radius)) //               
+                        {
+                            battleObjects[i].TakeDamage(damage);
+                        }
                     }
                 }
             }
