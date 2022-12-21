@@ -2,17 +2,35 @@
 
 public class MonsterBehaviorTreeData : BehaviorTreeData
 {
-    public MonsterBehaviorTreeData(Transform inTransform, float inAggroDistance) : base(inTransform)
+    public MonsterBehaviorTreeData(Transform inTransform,
+                                    float inAggroDistance,
+                                    MonsterAttackManager inAttackManager, 
+                                    Vector3 inBasePosition, 
+                                    float inComeBackDistance) : base(inTransform)
     {
         AggroDistance = inAggroDistance;
+        attackManager = inAttackManager;
+        basePostion = inBasePosition;
+        comeBackDistance = inComeBackDistance;
     }
 
     public float AggroDistance { get; private set; } = 0f;
     public MoveData ChaseData { get; set; } = MoveData.Default;
     public MoveData ComeBackData { get; set; } = MoveData.Default;
 
+    private readonly MonsterAttackManager attackManager = null;
+    private readonly Vector3 basePostion = Vector3.one;
+    private readonly float comeBackDistance = 0f;
+
     public bool IsChase()
     {
+        AttackInfo attackInfo = attackManager.GetAttackInfo();
+        float maxRange = Mathf.Pow(attackInfo.MaxRange, 2);
+        if (maxRange < TargetDistance())
+        {
+            ChaseData = new MoveData(true, attackInfo.MaxRange);
+        }
+
         return ChaseData.isMove;
     }
 
@@ -30,7 +48,37 @@ public class MonsterBehaviorTreeData : BehaviorTreeData
 
     public bool IsAttack()
     {
-        return ReserveAttackInfo != null;
+        bool result = false;
+
+        if (Target.IsDie() == false)
+        {
+            float targetDistance = TargetDistance();
+            if (AggroDistance >= targetDistance)
+            {
+                AttackInfo active = attackManager.GetActiveAttackInfo();
+                if (active != null)
+                {
+                    result = true;
+
+                    float maxRange = Mathf.Pow(active.MaxRange, 2);
+                    if (maxRange < targetDistance)
+                    {
+                        ChaseData = new MoveData(true, active.MaxRange);
+                    }
+                    else
+                    {
+                        ReserveAttackInfo = active;
+                    }
+                }
+            }
+        }
+
+        return result;
+    }
+
+    public bool NotAttackChase()
+    {
+        return !ChaseData.isMove;
     }
 
     public override bool CancelAttackAnimation()
@@ -40,6 +88,11 @@ public class MonsterBehaviorTreeData : BehaviorTreeData
 
     public bool IsComeBack()
     {
+        if ((basePostion - transform.position).sqrMagnitude > Mathf.Pow(comeBackDistance, 2) == true)
+        {
+            ComeBackData = new MoveData(true, 0f);
+        }
+
         return ComeBackData.isMove;
     }
 

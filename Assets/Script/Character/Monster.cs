@@ -51,7 +51,7 @@ public class Monster : BattleObject
 
     public void Initialize(Player target, Vector3 basePosition, Action<AttackInfo, uint, BattleObject, BattleObject, float> inAttackAction)
     {
-        treeData = new MonsterBehaviorTreeData(transform, monsterData.AggroDistance);
+        treeData = new MonsterBehaviorTreeData(transform, monsterData.AggroDistance, attackManager, basePosition, monsterData.ComeBackDistance);
         attackAction = inAttackAction;
         SetTree(basePosition);
         attackManager.RegistAttackInfo(attackDatas);
@@ -64,7 +64,7 @@ public class Monster : BattleObject
         chaseLogic = new MonsterChaseLogic(treeData, animator, navMeshAgent);
         attackAnimationLogic = new AttackAnimationLogic(treeData, animator, attackManager, Attack);
         comeBackLogic = new MonsterComeBackLogic(treeData, animator, basePosition, navMeshAgent);
-        idleLogic = new MonsterIdleLogic(treeData, attackManager, basePosition, monsterData.ComeBackDistance);
+        idleLogic = new MonsterIdleLogic();
 
         behaviorTree = new MonsterBehaviorTree(treeData,
                                     dieLogic.StartLogic,
