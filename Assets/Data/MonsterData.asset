@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: MonsterData
   m_EditorClassIdentifier: 
   tribe: 1
-  attack: 3
+  attack: 5
   hp: 100
   aggroDistance: 5
-  comeBackDistance: 3
+  comeBackDistance: 7

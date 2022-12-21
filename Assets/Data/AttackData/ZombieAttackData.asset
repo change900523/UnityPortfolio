@@ -24,4 +24,4 @@ MonoBehaviour:
   hitTimes:
   - 0.5
   animationIndex: 1
-  attackDamage: 1
+  attackDamage: 0
