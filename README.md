@@ -13,6 +13,9 @@ PlayerData, PlayerAttackData, MonsterData, ZombieAttackData 변경을 통해 데
 범위 공격을 테스트 하는 씬입니다.
 
 Guided : 타겟 타입 공격입니다.
+
 Circle : 원형 범위 공격 입니다. 첫번째 input은 원의 반지름 입니다.
+
 CircularSector : 부채꼴 범위 공격 입니다. 첫번째 input은 반지름 두번째 input은 각도 입니다.
+
 Box : 박스 범위 공격 입니다. input은 박스의 크기 입니다.
